@@ -10,7 +10,7 @@ namespace Simbir_UniqueWordParser.BL
 {
     public static class HtmlUtils
     {
-        public static string GetUniqueWordsByUrl(string url)
+        public static List<WordStat> GetUniqueWordsStatisticsByUrl(string url)
         {
             string content = string.Empty;
 
@@ -47,24 +47,19 @@ namespace Simbir_UniqueWordParser.BL
             {
                 var result = string.Empty;
                 var request = (HttpWebRequest)WebRequest.Create(url);
-                var response = (HttpWebResponse)request.GetResponse();
-
-                if (response.StatusCode == HttpStatusCode.OK)
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 {
-                    var receiveStream = response.GetResponseStream();
-                    if (receiveStream != null)
+                    if (response.StatusCode == HttpStatusCode.OK)
                     {
-                        StreamReader readStream;
-
-                        if (response.CharacterSet == null)
-                            readStream = new StreamReader(receiveStream);
-                        else
-                            readStream = new StreamReader(receiveStream, Encoding.GetEncoding(response.CharacterSet));
-
-                        result = readStream.ReadToEnd();
-                        readStream.Close();
+                        var receiveStream = response.GetResponseStream();
+                        if (receiveStream != null)
+                        {
+                            using (StreamReader sr = new StreamReader(receiveStream, Encoding.UTF8))
+                            {
+                                result = sr.ReadToEnd();
+                            }
+                        }
                     }
-                    response.Close();
                 }
                 return result;
             }

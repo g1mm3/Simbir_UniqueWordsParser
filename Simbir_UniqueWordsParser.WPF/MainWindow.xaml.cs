@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,15 +27,36 @@ namespace Simbir_UniqueWordsParser.WPF
             InitializeComponent();
         }
 
-        private async void BtnStart_Click(object sender, RoutedEventArgs e)
+        private void BtnStart_Click(object sender, RoutedEventArgs e)
         {
             string url = tbxUrl.Text;
             btnStart.IsEnabled = false;
 
-            string wordsFromHtml = HtmlUtils.GetUniqueWordsByUrl(url);
-            MessageBox.Show(wordsFromHtml);
+            List<WordStat> wordsStat = HtmlUtils.GetUniqueWordsStatisticsByUrl(url);
+            lbxWordsStat.ItemsSource = wordsStat;
+
+            MessageBox.Show(IsUrlAddressValid(url).ToString());
 
             btnStart.IsEnabled = true;
+        }
+
+        private bool IsUrlAddressValid(string url)
+        {
+            if (!url.StartsWith("https://"))
+            {
+                MessageBox.Show("Введите ссылку, начинающуюся с https://");
+                return false;
+            }
+
+            //// todo: возможно, добавить match и проверку с помощью regex
+            //Match match = Regex.Match(url, @"^https://\w\.com");
+            //if (!match.Success)
+            //{
+            //    MessageBox.Show("Введите ссылку в формате: https://site.com");
+            //    return false;
+            //}
+
+            return true;
         }
     }
 }
