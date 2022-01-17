@@ -1,0 +1,32 @@
+﻿<Window x:Class="Simbir_UniqueWordsParser.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Simbir_UniqueWordsParser.WPF"
+        mc:Ignorable="d"
+        Title="Unique Words Parser" Height="450" Width="800">
+    <StackPanel Margin="250 10">
+        <TextBlock Text="Введите URL в формате https://site.com/" />
+        <TextBox x:Name="tbxUrl" Margin="0 5 0 0" />
+        <Button x:Name="btnStart" Content="Начать" Margin="0 5 0 0" IsDefault="True" Click="BtnStart_Click" />
+
+        <Border Margin="0 20 0 0" BorderThickness="1" BorderBrush="Black">
+            <StackPanel>
+                <TextBlock Text="Статистика по количеству уникальных слов в тексте" />
+
+                <ListBox x:Name="lbxWordsStat">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Word}" />
+                                <TextBlock Text="{Binding Count}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </Border>
+        
+    </StackPanel>
+</Window>
