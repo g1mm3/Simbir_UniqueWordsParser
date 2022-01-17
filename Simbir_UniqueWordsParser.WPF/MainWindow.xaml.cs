@@ -26,13 +26,15 @@ namespace Simbir_UniqueWordsParser.WPF
             InitializeComponent();
         }
 
-        private async void BtnStart_Click(object sender, RoutedEventArgs e)
+        private void BtnStart_Click(object sender, RoutedEventArgs e)
         {
             string url = tbxUrl.Text;
             btnStart.IsEnabled = false;
 
-            string wordsFromHtml = HtmlUtils.GetUniqueWordsByUrl(url);
-            MessageBox.Show(wordsFromHtml);
+            List<WordStat> wordsStat = HtmlUtils.GetUniqueWordsStatisticsByUrl(url);
+            lbxWordsStat.ItemsSource = wordsStat;
+
+            //MessageBox.Show(wordsFromHtml);
 
             btnStart.IsEnabled = true;
         }

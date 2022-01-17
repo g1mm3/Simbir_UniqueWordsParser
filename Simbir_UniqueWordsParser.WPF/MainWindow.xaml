@@ -5,28 +5,34 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Simbir_UniqueWordsParser.WPF"
         mc:Ignorable="d"
-        Title="Unique Words Parser" Height="450" Width="800">
-    <StackPanel Margin="250 10">
-        <TextBlock Text="Введите URL в формате https://site.com/" />
-        <TextBox x:Name="tbxUrl" Margin="0 5 0 0" />
-        <Button x:Name="btnStart" Content="Начать" Margin="0 5 0 0" IsDefault="True" Click="BtnStart_Click" />
-
-        <Border Margin="0 20 0 0" BorderThickness="1" BorderBrush="Black">
-            <StackPanel>
-                <TextBlock Text="Статистика по количеству уникальных слов в тексте" />
-
-                <ListBox x:Name="lbxWordsStat">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding Word}" />
-                                <TextBlock Text="{Binding Count}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </StackPanel>
-        </Border>
+        Title="Unique Words Parser" Height="675" Width="1200" WindowStartupLocation="CenterScreen" WindowState="Normal">
+    <Grid Margin="250 10">
         
-    </StackPanel>
+        <TextBlock Text="Введите URL в формате https://site.com/" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <TextBox x:Name="tbxUrl" Margin="0 5 0 0" VerticalContentAlignment="Center" Grid.Row="1" />
+        <Button x:Name="btnStart" Content="Начать" Margin="0 5 0 0" IsDefault="True" Click="BtnStart_Click" Grid.Row="2" />
+
+        <Border Margin="0 20 0 0" BorderThickness="1" BorderBrush="Black" Grid.Row="3">
+            <Grid>
+                <TextBlock Text="Количество уникальных слов на странице" HorizontalAlignment="Center" />
+                
+                <ListView x:Name="lbxWordsStat"
+                              ScrollViewer.VerticalScrollBarVisibility="Visible"
+                              ScrollViewer.CanContentScroll="False">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Слово" DisplayMemberBinding="{Binding Path=Word}" Width="140" />
+                            <GridViewColumn Header="Количество" DisplayMemberBinding="{Binding Path=Count}" Width="140" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
+        </Border>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.07*" />
+            <RowDefinition Height="0.05*" />
+            <RowDefinition Height="0.06*" />
+            <RowDefinition Height="0.65*" />
+        </Grid.RowDefinitions>
+    </Grid>
 </Window>

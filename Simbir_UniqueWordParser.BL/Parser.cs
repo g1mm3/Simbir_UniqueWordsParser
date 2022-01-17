@@ -28,13 +28,18 @@ namespace Simbir_UniqueWordParser.BL
                 return null;
             }
 
-            return Regex.Replace(htmlContent, @"<[^>]+>|&nbsp;|<span>|&mdash|&raquo", string.Empty);
+            // testing
+            var regex = new Regex(@"^.+<head>.+</head>.+");
+            Match res = regex.Match(htmlContent);
+
+            return Regex.Replace(htmlContent, @"^.+<head>.+</head>.+", string.Empty);
+            //return Regex.Replace(htmlContent, @"<[^>]+>|&nbsp;|<span>|&mdash|&raquo|<!--[^>]+-->|<head>[^>].+</head>|<script>[^>]+</script>|<noscript>[^>]+</noscript>|", string.Empty);
         }
 
-        public static string GroupString(string content)
+        public static List<WordStat> GroupString(string content)
         {
-            var masssivCar = new char[] { ' ', ',', '.', '!', '?', '"', ';', ':', '[', ']', '(', ')', '\n', '\r', '\t', '\\', '/', '{', '}' }; // todo качество поиск
-            List<string> contentList = content.Split(masssivCar).ToList();
+            var splitSymbolsArray = new char[] { ' ', ',', '.', '!', '?', '"', ';', ':', '[', ']', '(', ')', '\n', '\r', '\t', '\\', '/', '{', '}' };
+            List<string> contentList = content.Split(splitSymbolsArray).ToList();
             var newcontentList = new List<string>();
             foreach (var item in contentList)
             {
@@ -50,16 +55,18 @@ namespace Simbir_UniqueWordParser.BL
 
             string rezList = string.Empty;
 
+            List<WordStat> wordsStat = new List<WordStat>();
             foreach (var item in rez.OrderByDescending(x => x.Count).ThenBy(x => x.Name))
             {
                 if (item.Name != null)
                 {
-                    rezList += $"{item.Name} - {item.Count} \n";
+                    // rezList += $"{item.Name} - {item.Count} \n";
+                    wordsStat.Add(new WordStat { Word = item.Name, Count = item.Count });
                 }
 
             }
 
-            return rezList;
+            return wordsStat;
         }
     }
 }
