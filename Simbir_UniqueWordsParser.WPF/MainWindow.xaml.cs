@@ -47,7 +47,7 @@ namespace Simbir_UniqueWordsParser.WPF
             try
             {
                 return await Task.Run(() => HtmlUtils.GetUniqueWordsStatisticsByUrl(url));
-
+                 
             }
             catch (Exception ex)
             {
