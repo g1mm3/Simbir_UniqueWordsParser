@@ -30,13 +30,22 @@ namespace Simbir_UniqueWordsParser.WPF
         private void BtnStart_Click(object sender, RoutedEventArgs e)
         {
             string url = tbxUrl.Text;
+
+            if (!IsUrlAddressValid(url))
+                return;
+
             btnStart.IsEnabled = false;
 
-            List<WordStat> wordsStat = HtmlUtils.GetUniqueWordsStatisticsByUrl(url);
-            lbxWordsStat.ItemsSource = wordsStat;
-
-            MessageBox.Show(IsUrlAddressValid(url).ToString());
-
+            try
+            {
+                List<WordStat> wordsStat = HtmlUtils.GetUniqueWordsStatisticsByUrl(url);
+                lbxWordsStat.ItemsSource = wordsStat;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
             btnStart.IsEnabled = true;
         }
 
@@ -48,13 +57,13 @@ namespace Simbir_UniqueWordsParser.WPF
                 return false;
             }
 
-            //// todo: возможно, добавить match и проверку с помощью regex
-            //Match match = Regex.Match(url, @"^https://\w\.com");
-            //if (!match.Success)
-            //{
-            //    MessageBox.Show("Введите ссылку в формате: https://site.com");
-            //    return false;
-            //}
+            // Валидация
+            Match match = Regex.Match(url, @"^https://\w+\..+");
+            if (!match.Success)
+            {
+                MessageBox.Show("Введите ссылку в формате: https://site.com");
+                return false;
+            }
 
             return true;
         }

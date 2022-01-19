@@ -12,27 +12,23 @@ namespace Simbir_UniqueWordParser.BL
     {
         public static List<WordStat> GetUniqueWordsStatisticsByUrl(string url)
         {
-            string content = string.Empty;
-
-            string htmlContent = GetHtmlStringByUrl(url);
-
-            using (StringReader sr = new StringReader(htmlContent))
+            try
             {
-                string line;
-                string tempBuffer = string.Empty;
-                while ((line = sr.ReadLine()) != null)
-                {
-                    tempBuffer += line;
-                    if (line.EndsWith(">"))
-                    {
-                        content += Parser.GetHtmlInnerText(tempBuffer) + " ";
-                        tempBuffer = string.Empty;
-                        continue;
-                    }
+                string htmlContent = GetHtmlStringByUrl(url);
 
-                    content += Parser.GetHtmlInnerText(line) + " ";
-                }
-                return Parser.GroupString(content);
+                // Последовательность выполнения методов - важна
+                htmlContent = Parser.RemoveHtmlTagWithContent(htmlContent, "head");
+                htmlContent = Parser.RemoveHtmlTagWithContent(htmlContent, "noscript");
+                htmlContent = Parser.RemoveHtmlTagWithContent(htmlContent, "script");
+                htmlContent = Parser.RemoveAllHtmlTagBrackets(htmlContent);
+                htmlContent = Parser.RemoveUnicodeSymbols(htmlContent);
+                htmlContent = Parser.RemoveAllHtmlComments(htmlContent);
+
+                return Parser.GroupString(htmlContent);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
 
@@ -43,30 +39,56 @@ namespace Simbir_UniqueWordParser.BL
         /// <returns></returns>
         private static string GetHtmlStringByUrl(string url)
         {
+            string htmlCode = string.Empty;
+
             try
             {
-                var result = string.Empty;
-                var request = (HttpWebRequest)WebRequest.Create(url);
-                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-                {
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        var receiveStream = response.GetResponseStream();
-                        if (receiveStream != null)
-                        {
-                            using (StreamReader sr = new StreamReader(receiveStream, Encoding.UTF8))
-                            {
-                                result = sr.ReadToEnd();
-                            }
-                        }
-                    }
-                }
-                return result;
+                htmlCode = GetHtmlCode(url);
             }
             catch (OutOfMemoryException ex)
             {
-                throw new Exception("Ошибка памяти " + ex.Message);
+                throw new Exception("Нехватка памяти: " + ex.Message);
             }
+            // Если при подключении через https возникнут ошибки, то запрос на сайт будет уже через http
+            catch (Exception)
+            {
+                if (url.StartsWith("https://"))
+                {
+                    url = url.Remove(4, 1);
+                    return GetHtmlCode(url);
+                }
+            }
+
+            return htmlCode;
+        }
+
+        private static string GetHtmlCode(string url)
+        {
+            var result = string.Empty;
+            var request = (HttpWebRequest)WebRequest.Create(url);
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            {
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var receiveStream = response.GetResponseStream();
+                    if (receiveStream != null)
+                    {
+                        Encoding encoding = Encoding.UTF8;
+
+                        if (response.CharacterSet == "windows-1251")
+                        {
+                            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                            encoding = Encoding.GetEncoding("windows-1251");
+                        }
+
+                        using (StreamReader sr = new StreamReader(receiveStream, encoding))
+                        {
+                            result = sr.ReadToEnd();
+                        }
+                    }
+                }
+            }
+            return result;
         }
     }
 }
