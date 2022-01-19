@@ -10,11 +10,11 @@ namespace Simbir_UniqueWordParser.BL
 {
     public static class HtmlUtils
     {
-        public static List<WordStat> GetUniqueWordsStatisticsByUrl(string url)
+        public static async Task<List<WordStat>> GetUniqueWordsStatisticsByUrl(string url)
         {
             try
             {
-                string htmlContent = GetHtmlStringByUrl(url);
+                string htmlContent = await GetHtmlStringByUrl(url);
 
                 // Последовательность выполнения методов - важна
                 htmlContent = Parser.RemoveHtmlTagWithContent(htmlContent, "head");
@@ -24,7 +24,8 @@ namespace Simbir_UniqueWordParser.BL
                 htmlContent = Parser.RemoveUnicodeSymbols(htmlContent);
                 htmlContent = Parser.RemoveAllHtmlComments(htmlContent);
 
-                return Parser.GroupString(htmlContent);
+                List<WordStat> result = await Parser.GroupString(htmlContent);
+                return result;
             }
             catch (Exception ex)
             {
@@ -37,13 +38,13 @@ namespace Simbir_UniqueWordParser.BL
         /// </summary>
         /// <param name="url">URL-адрес сайта</param>
         /// <returns></returns>
-        private static string GetHtmlStringByUrl(string url)
+        private static async Task<string> GetHtmlStringByUrl(string url)
         {
             string htmlCode = string.Empty;
 
             try
             {
-                htmlCode = GetHtmlCode(url);
+                htmlCode = await GetHtmlCode(url);
             }
             catch (OutOfMemoryException ex)
             {
@@ -55,18 +56,18 @@ namespace Simbir_UniqueWordParser.BL
                 if (url.StartsWith("https://"))
                 {
                     url = url.Remove(4, 1);
-                    return GetHtmlCode(url);
+                    return await GetHtmlCode(url);
                 }
             }
 
             return htmlCode;
         }
 
-        private static string GetHtmlCode(string url)
+        private static async Task<string> GetHtmlCode(string url)
         {
             var result = string.Empty;
             var request = (HttpWebRequest)WebRequest.Create(url);
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (HttpWebResponse response =  (HttpWebResponse)(await request.GetResponseAsync()))
             {
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
@@ -83,7 +84,7 @@ namespace Simbir_UniqueWordParser.BL
 
                         using (StreamReader sr = new StreamReader(receiveStream, encoding))
                         {
-                            result = sr.ReadToEnd();
+                            result = await sr.ReadToEndAsync();
                         }
                     }
                 }

@@ -27,7 +27,7 @@ namespace Simbir_UniqueWordsParser.WPF
             InitializeComponent();
         }
 
-        private void BtnStart_Click(object sender, RoutedEventArgs e)
+        private async void BtnStart_Click(object sender, RoutedEventArgs e)
         {
             string url = tbxUrl.Text;
 
@@ -36,17 +36,24 @@ namespace Simbir_UniqueWordsParser.WPF
 
             btnStart.IsEnabled = false;
 
+            List<WordStat> wordsStat = await GetUniqueWordsStatisticsByUrlAsync(url);
+            lbxWordsStat.ItemsSource = wordsStat;
+
+            btnStart.IsEnabled = true;
+        }
+
+        private async Task<List<WordStat>> GetUniqueWordsStatisticsByUrlAsync(string url)
+        {
             try
             {
-                List<WordStat> wordsStat = HtmlUtils.GetUniqueWordsStatisticsByUrl(url);
-                lbxWordsStat.ItemsSource = wordsStat;
+                return await Task.Run(() => HtmlUtils.GetUniqueWordsStatisticsByUrl(url));
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                return null;
             }
-            
-            btnStart.IsEnabled = true;
         }
 
         private bool IsUrlAddressValid(string url)

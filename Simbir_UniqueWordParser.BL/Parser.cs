@@ -48,7 +48,7 @@ namespace Simbir_UniqueWordParser.BL
             return Regex.Replace(htmlContent, @$"{symbolsString}", string.Empty);
         }
 
-        public static List<WordStat> GroupString(string content)
+        public static async Task<List<WordStat>> GroupString(string content)
         {
             var splitSymbolsArray = new char[] { ' ', ',', '.', '!', '?', '"', ';', ':',
                 '[', ']', '(', ')', '\n', '\r', '\t', '\\', '/', '{', '}' };
