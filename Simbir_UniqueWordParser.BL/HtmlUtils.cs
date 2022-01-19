@@ -67,7 +67,7 @@ namespace Simbir_UniqueWordParser.BL
         {
             var result = string.Empty;
             var request = (HttpWebRequest)WebRequest.Create(url);
-            using (HttpWebResponse response =  (HttpWebResponse)(await request.GetResponseAsync()))
+            using (HttpWebResponse response = (HttpWebResponse)(await request.GetResponseAsync()))
             {
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
