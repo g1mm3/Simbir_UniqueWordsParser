@@ -23,12 +23,16 @@ namespace Simbir_UniqueWordsParser.WPF
     public partial class MainWindow : Window
     {
         IReader _reader;
+        IMessageService _messageService;
+        ILogger _logger;
 
         public MainWindow()
         {
             InitializeComponent();
 
             _reader = Configuration.GetReader();
+            _messageService = Configuration.GetMessageService();
+            _logger = Configuration.GetLogger();
         }
 
         private async void BtnStart_Click(object sender, RoutedEventArgs e)
@@ -40,10 +44,14 @@ namespace Simbir_UniqueWordsParser.WPF
 
             btnStart.IsEnabled = false;
 
-            List<WordStat> wordsStat = await GetUniqueWordsStatisticsByUrlAsync(url);
-            lbxWordsStat.ItemsSource = wordsStat;
+            List<WordStat> wordStats = await GetUniqueWordsStatisticsByUrlAsync(url);
+            lbxWordsStat.ItemsSource = wordStats;
 
-            //DB.DbUtils.AddWordStatToDb()
+            // Перевод BL списка в DB
+            List<DB.Models.WordStat> dbWordStats = new List<DB.Models.WordStat>();
+            wordStats.ForEach(x => dbWordStats.Add(BL.Convert.BlToDb.WordStat(x)));
+
+            await DB.DbUtils.AddStatsToDb(url, dbWordStats);
 
             btnStart.IsEnabled = true;
         }
@@ -62,7 +70,9 @@ namespace Simbir_UniqueWordsParser.WPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                _messageService.ShowError(ex.Message);
+                _logger.Log(ex.Message);
+
                 return new List<WordStat>();
             }
         }
@@ -76,14 +86,14 @@ namespace Simbir_UniqueWordsParser.WPF
         {
             if (!url.StartsWith("https://"))
             {
-                MessageBox.Show("Введите ссылку, начинающуюся с https://");
+                _messageService.ShowExclamation("Введите ссылку, начинающуюся с https://");
                 return false;
             }
 
             Match match = Regex.Match(url, @"^https://\w+\..+");
             if (!match.Success)
             {
-                MessageBox.Show("Введите ссылку в формате: https://site.com");
+                _messageService.ShowExclamation("Введите ссылку в формате: https://site.com");
                 return false;
             }
 
