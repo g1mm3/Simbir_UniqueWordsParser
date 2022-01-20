@@ -1,4 +1,4 @@
-﻿using Simbir_UniqueWordParser.BL;
+﻿using Simbir_UniqueWordsParser.BL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +22,13 @@ namespace Simbir_UniqueWordsParser.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        IReader _reader;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            _reader = Configuration.GetReader();
         }
 
         private async void BtnStart_Click(object sender, RoutedEventArgs e)
@@ -39,23 +43,35 @@ namespace Simbir_UniqueWordsParser.WPF
             List<WordStat> wordsStat = await GetUniqueWordsStatisticsByUrlAsync(url);
             lbxWordsStat.ItemsSource = wordsStat;
 
+            //DB.DbUtils.AddWordStatToDb()
+
             btnStart.IsEnabled = true;
         }
 
+        /// <summary>
+        /// Метод для запуска задачи асинхронно, дабы не зависал интерфейс во время выполнения
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         private async Task<List<WordStat>> GetUniqueWordsStatisticsByUrlAsync(string url)
         {
             try
             {
-                return await Task.Run(() => HtmlUtils.GetUniqueWordsStatisticsByUrl(url));
+                return await Task.Run(() => _reader.GetUniqueWordsStatisticsByUrl(url));
                  
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                return null;
+                return new List<WordStat>();
             }
         }
 
+        /// <summary>
+        /// Метод, отвечающий за валидацию введённого URL
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         private bool IsUrlAddressValid(string url)
         {
             if (!url.StartsWith("https://"))
@@ -64,7 +80,6 @@ namespace Simbir_UniqueWordsParser.WPF
                 return false;
             }
 
-            // Валидация
             Match match = Regex.Match(url, @"^https://\w+\..+");
             if (!match.Success)
             {

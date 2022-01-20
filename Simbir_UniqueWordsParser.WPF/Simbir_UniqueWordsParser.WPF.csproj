@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Simbir_UniqueWordParser.BL\Simbir_UniqueWordParser.BL.csproj" />
+    <ProjectReference Include="..\Simbir_UniqueWordsParser.BL\Simbir_UniqueWordsParser.BL.csproj" />
+    <ProjectReference Include="..\Simbir_UniqueWordsParser.DB\Simbir_UniqueWordsParser.DB.csproj" />
   </ItemGroup>
 
 </Project>

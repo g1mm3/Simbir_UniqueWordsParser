@@ -16,9 +16,7 @@
             <Grid>
                 <TextBlock Text="Количество уникальных слов на странице" HorizontalAlignment="Center" />
                 
-                <ListView x:Name="lbxWordsStat"
-                              ScrollViewer.VerticalScrollBarVisibility="Visible"
-                              ScrollViewer.CanContentScroll="False">
+                <ListView x:Name="lbxWordsStat">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Слово" DisplayMemberBinding="{Binding Path=Word}" Width="140" />

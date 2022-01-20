@@ -5,25 +5,46 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Simbir_UniqueWordParser.BL
+namespace Simbir_UniqueWordsParser.BL
 {
     public class Parser
     {
+        /// <summary>
+        /// Удаление указанного (по названию) html-тега вместе с его содержимым
+        /// </summary>
+        /// <param name="htmlContent"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
         public static string RemoveHtmlTagWithContent(string htmlContent, string tag)
         {
             return Regex.Replace(htmlContent, @$"<{tag}[\W\w\S\s]*?>[\W\w\S\s]*?</{tag}>", string.Empty);
         }
 
+        /// <summary>
+        /// Удаление всех html-тегов без затрагивания содержимого
+        /// </summary>
+        /// <param name="htmlContent"></param>
+        /// <returns></returns>
         public static string RemoveAllHtmlTagBrackets(string htmlContent)
         {
             return Regex.Replace(htmlContent, @"<[\W\w\S\s]*?>", string.Empty);
         }
 
+        /// <summary>
+        /// Удаление всех комментариев в html коде
+        /// </summary>
+        /// <param name="htmlContent"></param>
+        /// <returns></returns>
         public static string RemoveAllHtmlComments(string htmlContent)
         {
             return Regex.Replace(htmlContent, @"<!--[\W\w\S\s]*?-->", string.Empty);
         }
 
+        /// <summary>
+        /// Удаление всех лишних символов в html коде
+        /// </summary>
+        /// <param name="htmlContent"></param>
+        /// <returns></returns>
         public static string RemoveUnicodeSymbols(string htmlContent)
         {
             string[] symbols = new string[]
@@ -39,7 +60,7 @@ namespace Simbir_UniqueWordParser.BL
             };
 
             string symbolsString = string.Empty;
-            foreach(string symbol in symbols)
+            foreach (string symbol in symbols)
             {
                 symbolsString += $"{symbol}|";
             }
@@ -53,21 +74,11 @@ namespace Simbir_UniqueWordParser.BL
             var splitSymbolsArray = new char[] { ' ', ',', '.', '!', '?', '"', ';', ':',
                 '[', ']', '(', ')', '\n', '\r', '\t', '\\', '/', '{', '}' };
 
-            List<string> contentList = content.Split(splitSymbolsArray).ToList();
-            var newcontentList = new List<string>();
-            foreach (var item in contentList)
-            {
-                if (!string.IsNullOrEmpty(item))
-                {
-                    newcontentList.Add(item);
-                }
-            }
+            List<string> wordsList = content.Split(splitSymbolsArray).Where(x => x != null).ToList();
 
-            var rez = from r in newcontentList
+            var rez = from r in wordsList
                       group r by r.ToUpper() into g
                       select (Name: g.Key, Count: g.Count());
-
-            string rezList = string.Empty;
 
             List<WordStat> wordsStat = new List<WordStat>();
             foreach (var item in rez.OrderByDescending(x => x.Count).ThenBy(x => x.Name))
@@ -79,12 +90,11 @@ namespace Simbir_UniqueWordParser.BL
                     if (!word.Any(x => char.IsLetter(x)))
                         continue;
 
-                    // Удаление всех числе из строки
+                    // Удаление всех чисел из строки
                     word = Regex.Replace(item.Name, "[0-9]", string.Empty);
 
                     wordsStat.Add(new WordStat { Word = word, Count = item.Count });
                 }
-
             }
 
             return wordsStat;
