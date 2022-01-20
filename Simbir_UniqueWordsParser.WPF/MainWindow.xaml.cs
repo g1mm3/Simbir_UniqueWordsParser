@@ -41,16 +41,15 @@ namespace Simbir_UniqueWordsParser.WPF
 
             btnStart.IsEnabled = false;
 
-            List<WordStat> wordStats = await GetUniqueWordsStatisticsByUrlAsync(url);
-            lbxWordsStat.ItemsSource = wordStats;
-
             try
             {
-                // Перевод списка BL сущностей в список сущностей формата BD
-                List<DB.Models.WordStat> dbWordStats = new List<DB.Models.WordStat>();
-                wordStats?.ForEach(x => dbWordStats.Add(BL.Convert.BlToDb.WordStat(x)));
+                List<WordStat> wordStats = await GetUniqueWordsStatisticsByUrlAsync(url);
+                lbxWordsStat.ItemsSource = wordStats;
 
-                await DB.DbUtils.AddStatsToDb(url, dbWordStats);
+                if (wordStats != null)
+                {
+                    await DB.DbUtils.AddStatsToDb(url, BL.Convert.BlToDb.WordStatsList(wordStats));
+                }
             }
             catch (Exception ex)
             {
@@ -68,18 +67,7 @@ namespace Simbir_UniqueWordsParser.WPF
         /// <returns></returns>
         private async Task<List<WordStat>> GetUniqueWordsStatisticsByUrlAsync(string url)
         {
-            try
-            {
-                return await Task.Run(() => _reader.GetUniqueWordsStatisticsByUrl(url));
-
-            }
-            catch (Exception ex)
-            {
-                _messageService.ShowError(ex.Message);
-                _logger.Log(ex.Message);
-
-                return new List<WordStat>();
-            }
+            return await Task.Run(() => _reader.GetUniqueWordsStatisticsByUrl(url));
         }
     }
 }

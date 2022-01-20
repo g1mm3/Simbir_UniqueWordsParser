@@ -71,19 +71,19 @@ namespace Simbir_UniqueWordsParser.BL
             return Regex.Replace(htmlContent, @$"{symbolsString}", string.Empty);
         }
 
-        public static async Task<List<WordStat>> GroupString(string content)
+        public static List<WordStat> GroupString(string content)
         {
             var splitSymbolsArray = new char[] { ' ', ',', '.', '!', '?', '"', ';', ':',
                 '[', ']', '(', ')', '\n', '\r', '\t', '\\', '/', '{', '}' };
 
             List<string> wordsList = content.Split(splitSymbolsArray).Where(x => x != null).ToList();
 
-            var rez = from r in wordsList
+            var temp = from r in wordsList
                       group r by r.ToUpper() into g
                       select (Name: g.Key, Count: g.Count());
 
             List<WordStat> wordsStat = new List<WordStat>();
-            foreach (var item in rez.OrderByDescending(x => x.Count).ThenBy(x => x.Name))
+            foreach (var item in temp.OrderByDescending(x => x.Count).ThenBy(x => x.Name))
             {
                 string word = item.Name;
                 if (word != null)

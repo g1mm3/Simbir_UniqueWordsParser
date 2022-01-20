@@ -10,13 +10,13 @@ namespace Simbir_UniqueWordsParser.BL.Convert
     {
         public static Core.WordStat WordStat(DB.Models.WordStat dbWordStat)
         {
-            Core.WordStat blWordStat = new Core.WordStat
+            Core.WordStat wordStat = new Core.WordStat
             {
                 Word = dbWordStat.Word,
                 Count = dbWordStat.Count
             };
 
-            return blWordStat;
+            return wordStat;
         }
     }
 }

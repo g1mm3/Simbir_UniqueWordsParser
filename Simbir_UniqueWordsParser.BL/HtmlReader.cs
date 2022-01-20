@@ -32,7 +32,7 @@ namespace Simbir_UniqueWordsParser.BL
                 htmlContent = Parser.RemoveUnicodeSymbols(htmlContent);
                 htmlContent = Parser.RemoveAllHtmlComments(htmlContent);
 
-                List<WordStat> result = await Parser.GroupString(htmlContent);
+                List<WordStat> result = Parser.GroupString(htmlContent);
                 return result;
             }
             catch (Exception ex)
