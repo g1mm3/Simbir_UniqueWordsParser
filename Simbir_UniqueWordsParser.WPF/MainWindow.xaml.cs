@@ -1,4 +1,4 @@
-﻿using Simbir_UniqueWordsParser.BL;
+﻿using Simbir_UniqueWordsParser.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;

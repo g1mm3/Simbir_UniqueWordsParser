@@ -8,7 +8,7 @@ namespace Simbir_UniqueWordsParser.BL.Convert
 {
     public static class BlToDb
     {
-        public static DB.Models.WordStat WordStat(BL.WordStat blWordStat)
+        public static DB.Models.WordStat WordStat(Core.WordStat blWordStat)
         {
             DB.Models.WordStat dbWordStat = new DB.Models.WordStat
             {

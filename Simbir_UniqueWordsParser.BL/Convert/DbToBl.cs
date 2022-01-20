@@ -8,9 +8,9 @@ namespace Simbir_UniqueWordsParser.BL.Convert
 {
     public static class DbToBl
     {
-        public static BL.WordStat WordStat(DB.Models.WordStat dbWordStat)
+        public static Core.WordStat WordStat(DB.Models.WordStat dbWordStat)
         {
-            BL.WordStat blWordStat = new BL.WordStat
+            Core.WordStat blWordStat = new Core.WordStat
             {
                 Word = dbWordStat.Word,
                 Count = dbWordStat.Count

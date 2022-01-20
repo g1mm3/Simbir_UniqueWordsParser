@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Simbir_UniqueWordsParser.Core\Simbir_UniqueWordsParser.Core.csproj" />
     <ProjectReference Include="..\Simbir_UniqueWordsParser.DB\Simbir_UniqueWordsParser.DB.csproj" />
   </ItemGroup>
 

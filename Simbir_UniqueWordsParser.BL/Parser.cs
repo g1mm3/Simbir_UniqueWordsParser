@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Simbir_UniqueWordsParser.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,6 +51,7 @@ namespace Simbir_UniqueWordsParser.BL
             string[] symbols = new string[]
             {
                 "&nbsp;", "&#160;",
+                "&copy;", "&#169;", "©",
                 "&reg;", "&#174;", "®",
                 "&trade;", "&#8482;", "™",
                 "&quot;", "&#34;",

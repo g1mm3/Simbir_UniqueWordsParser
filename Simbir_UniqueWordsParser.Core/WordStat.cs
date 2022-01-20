@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Simbir_UniqueWordsParser.BL
+namespace Simbir_UniqueWordsParser.Core
 {
     /// <summary>
     /// Класс, использующийся для последующего подставления в таблицу статистики в графическом интерфейсе

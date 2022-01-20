@@ -12,27 +12,68 @@ namespace Simbir_UniqueWordsParser.BL.Tests
     public class ParserTests
     {
         [TestMethod()]
-        public void RemoveHtmlTagWithContentTest()
+        public void RemoveHtmlTagWithContentTest_Head_Tag_Meta_Title_Delete_Content()
         {
-            Assert.Fail();
+            string htmlContent =
+            @"<head>
+                <meta charset=""utf-8"">
+                <title>Yandex</title>
+            </head>
+            <body></body>";
+
+            string htmlTag = "head";
+
+            string expected = "<body></body>";
+            string real = Parser.RemoveHtmlTagWithContent(htmlContent, htmlTag).Trim();
+            Assert.AreEqual(expected, real);
         }
 
         [TestMethod()]
-        public void RemoveAllHtmlTagBracketsTest()
+        public void RemoveAllHtmlTagBracketsTest_Tags_Head_Body_Meta_Title_Delete()
         {
-            Assert.Fail();
+            string htmlContent =
+            @"<head>
+                <meta charset=""utf-8"">
+                <title>Yandex</title>
+            </head>
+            <body></body>";
+
+            string expected = "Yandex";
+            string real = Parser.RemoveAllHtmlTagBrackets(htmlContent).Trim();
+            Assert.AreEqual(expected, real);
         }
 
         [TestMethod()]
-        public void RemoveAllHtmlCommentsTest()
+        public void RemoveAllHtmlCommentsTest_Comment_Delete()
         {
-            Assert.Fail();
+            string htmlContent =
+            @"<head>
+                <meta charset=""utf-8"">
+                <title>Yandex</title>
+            </head>
+            <body></body>
+            <!-- комментарий -->";
+
+            string expected =
+            @"<head>
+                <meta charset=""utf-8"">
+                <title>Yandex</title>
+            </head>
+            <body></body>";
+            string real = Parser.RemoveAllHtmlComments(htmlContent).Trim();
+            Assert.AreEqual(expected, real);
         }
 
         [TestMethod()]
-        public void RemoveUnicodeSymbolsTest()
+        public void RemoveUnicodeSymbolsTest_Reg_Symbol_Delete()
         {
-            Assert.Fail();
+            string htmlContent =
+            "©1997-2022 Yandex";
+
+            string expected =
+            "1997-2022 Yandex";
+            string real = Parser.RemoveUnicodeSymbols(htmlContent).Trim();
+            Assert.AreEqual(expected, real);
         }
     }
 }
