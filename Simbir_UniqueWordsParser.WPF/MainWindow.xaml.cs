@@ -39,19 +39,24 @@ namespace Simbir_UniqueWordsParser.WPF
         {
             string url = tbxUrl.Text;
 
-            if (!IsUrlAddressValid(url))
-                return;
-
             btnStart.IsEnabled = false;
 
             List<WordStat> wordStats = await GetUniqueWordsStatisticsByUrlAsync(url);
             lbxWordsStat.ItemsSource = wordStats;
 
-            // Перевод BL списка в DB
-            List<DB.Models.WordStat> dbWordStats = new List<DB.Models.WordStat>();
-            wordStats.ForEach(x => dbWordStats.Add(BL.Convert.BlToDb.WordStat(x)));
+            try
+            {
+                // Перевод списка BL сущностей в список сущностей формата BD
+                List<DB.Models.WordStat> dbWordStats = new List<DB.Models.WordStat>();
+                wordStats?.ForEach(x => dbWordStats.Add(BL.Convert.BlToDb.WordStat(x)));
 
-            await DB.DbUtils.AddStatsToDb(url, dbWordStats);
+                await DB.DbUtils.AddStatsToDb(url, dbWordStats);
+            }
+            catch (Exception ex)
+            {
+                _messageService.ShowError(ex.Message);
+                _logger.Log(ex.Message);
+            }
 
             btnStart.IsEnabled = true;
         }
@@ -66,7 +71,7 @@ namespace Simbir_UniqueWordsParser.WPF
             try
             {
                 return await Task.Run(() => _reader.GetUniqueWordsStatisticsByUrl(url));
-                 
+
             }
             catch (Exception ex)
             {
@@ -75,29 +80,6 @@ namespace Simbir_UniqueWordsParser.WPF
 
                 return new List<WordStat>();
             }
-        }
-
-        /// <summary>
-        /// Метод, отвечающий за валидацию введённого URL
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        private bool IsUrlAddressValid(string url)
-        {
-            if (!url.StartsWith("https://"))
-            {
-                _messageService.ShowExclamation("Введите ссылку, начинающуюся с https://");
-                return false;
-            }
-
-            Match match = Regex.Match(url, @"^https://\w+\..+");
-            if (!match.Success)
-            {
-                _messageService.ShowExclamation("Введите ссылку в формате: https://site.com");
-                return false;
-            }
-
-            return true;
         }
     }
 }

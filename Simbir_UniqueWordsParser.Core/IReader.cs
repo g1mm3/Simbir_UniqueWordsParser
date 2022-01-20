@@ -8,6 +8,11 @@ namespace Simbir_UniqueWordsParser.Core
 {
     public interface IReader
     {
+        /// <summary>
+        /// Получение статистики уникальных слов по URL
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         Task<List<WordStat>> GetUniqueWordsStatisticsByUrl(string url);
     }
 }

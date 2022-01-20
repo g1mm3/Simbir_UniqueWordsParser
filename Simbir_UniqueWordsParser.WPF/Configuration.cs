@@ -16,7 +16,10 @@ namespace Simbir_UniqueWordsParser.WPF
     {
         public static IReader GetReader()
         {
-            return new HtmlReader();
+            HtmlReader reader = new HtmlReader();
+            reader.ShowExclamation += GetMessageService().ShowExclamation;
+
+            return reader;
         }
 
         public static IMessageService GetMessageService()

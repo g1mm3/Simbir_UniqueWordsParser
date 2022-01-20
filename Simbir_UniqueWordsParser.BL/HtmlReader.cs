@@ -5,16 +5,23 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Simbir_UniqueWordsParser.BL
 {
     public class HtmlReader : IReader
     {
+        public delegate void EventHandler(string exclamationMessage);
+        public event EventHandler ShowExclamation;
+
         public async Task<List<WordStat>> GetUniqueWordsStatisticsByUrl(string url)
         {
             try
             {
+                if (!IsUrlAddressValid(url))
+                    return null;
+
                 string htmlContent = await GetHtmlCodeStringByUrl(url);
 
                 // Последовательность выполнения методов - важна
@@ -32,6 +39,29 @@ namespace Simbir_UniqueWordsParser.BL
             {
                 throw new Exception(ex.Message);
             }
+        }
+
+        /// <summary>
+        /// Метод, отвечающий за валидацию введённого URL
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        private bool IsUrlAddressValid(string url)
+        {
+            if (!url.StartsWith("https://"))
+            {
+                ShowExclamation?.Invoke("Введите ссылку, начинающуюся с https://");
+                return false;
+            }
+
+            Match match = Regex.Match(url, @"^https://\w+\..+");
+            if (!match.Success)
+            {
+                ShowExclamation?.Invoke("Введите ссылку в формате: https://site.com");
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
